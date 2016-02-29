@@ -1,0 +1,110 @@
+#!/usr/bin/python
+
+import matplotlib.pyplot as plt
+import os, sys
+import re
+import time
+import math
+import numpy as np
+
+##########################################################################
+
+try:
+    os.environ["DISPLAY"]
+except KeyError:
+    print('\033[1;31mProbleme avec l\'environnement\033[0m')
+    sys.exit(1);
+
+def calc(o, u, x):
+    res = (1 / (o * math.sqrt(2 * math.pi))) * math.exp(-0.5 * ((x - u) / o)**2)
+    return res
+#    res = (1 / (o * math.sqrt(2 * math.pi))) * math.exp(-1 * ((x - u)**2 / (2 * o**2)))
+
+##########################################################################
+
+if len(sys.argv) == 3:
+    try:
+       esp = int(sys.argv[1])
+       var = int(sys.argv[2])
+    except:
+        print("\033[1;31mVos arguments doivent etre des nombres entier\033[0m")
+        sys.exit(1)
+    if esp < 0 or var < 0:
+        print("\033[1;31mVos arguments ne peuvent pas etre negatif\033[1;0m")
+        sys.exit(1)
+    x = 0.0
+    res = 0
+    repartition = list()
+    xlist = list()
+    while x <= 200.0:
+        res += calc(var, esp, x)
+        repartition.append(res)
+        xlist.append(x)
+        x += 0.01
+    plt.plot(xlist, repartition, label = "repartition")
+    plt.ylim(0, 120)
+    plt.xlabel("QI")
+    plt.ylabel("probabilite(%)")
+    plt.legend(loc=0)
+    try:
+        plt.show()
+    except:
+        print("\n\033[1;31mC\033[1;32mo\033[1;33mc\033[1;30mh\033[1;31mo\033[1;32mn\033[1;30m d\033[1;31m'\033[1;32mo\033[1;33mr\033[0m")
+        sys.exit(1)
+
+elif len(sys.argv) == 4:
+    try:
+       esp = int(sys.argv[1])
+       var = int(sys.argv[2])
+       m = int(sys.argv[3])
+    except:
+        print("\033[1;31mVos arguments doivent etre des nombres entier\033[0m")
+        sys.exit(1)
+    if esp < 0 or var < 0 or m < 0:
+        print("\033[1;31mVos arguments ne peuvent pas etre negatif\033[1;0m")
+        sys.exit(1)
+    x = 0.0
+    res = 0
+    result = 0.0
+    while x <= 200.0:
+        res += calc(var, esp, x)
+        if (int(x) == m):
+            result = res
+            break
+        x += 0.01
+    print("\033[1;31m%.1f%%\033[1;33m des personnes ont un QI inferieur a \033[1;31m%d\033[1;0m" % (result, m))
+
+elif len(sys.argv) == 5:
+    try:
+       esp = int(sys.argv[1])
+       var = int(sys.argv[2])
+       mi = int(sys.argv[3])
+       ma = int(sys.argv[4])
+    except:
+        print("\033[1;31mVos arguments doivent etre des nombres entier\033[0m")
+        sys.exit(1)
+    if mi >= ma:
+        print("\033[1;31mVotre 3eme argument doit etre inferieur a votre 4eme argument\033[1;0m")
+        sys.exit(1)
+    if esp < 0 or var < 0 or mi < 0 or ma < 0:
+        print("\033[1;31mVos arguments ne peuvent pas etre negatif\033[1;0m")
+        sys.exit(1)
+    x = 0.0
+    res = 0
+    result = -1.0
+    result2 = -1.0
+    billy = -1
+    while x <= 200.0:
+        res += calc(var, esp, x)
+        if (int(x) == mi and result == -1):
+            result = res
+        if (int(x) == ma and result2 == -1):
+            result2 = res
+        x += 0.01
+    print("\033[1;31m%.1f%%\033[1;33m des personnes ont un QI compris entre \033[1;31m%d\033[1;33m et \033[1;31m%d\033[1;0m" % (result2 - result, mi, ma))
+
+else:
+    print("\033[1;31mUSAGE: ./205QI <nb> <nb>\033[0m")
+    print("\033[1;31m       ./205QI <nb> <nb> <nb>\033[0m")
+    print("\033[1;31m       ./205QI <nb> <nb> <nb> <nb>\033[0m")
+    sys.exit(1)
